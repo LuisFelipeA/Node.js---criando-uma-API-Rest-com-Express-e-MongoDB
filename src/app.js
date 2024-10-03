@@ -1,31 +1,27 @@
 import express from "express";
+import conectaNaDatabase from "./config/dbConnect.js";
+import livro from "./models/Livro.js";
+
+const conexao =  await conectaNaDatabase();
+
+conexao.on("error", (erro) => {
+    console.log("Erro de conexão", erro);
+});
+
+conexao.once("open", () => {
+    console.log("Conectado ao Banco");
+});
 
 const app = express(); // coloca todas as funções de express dentro de app
 app.use(express.json());
-
-const livros = [
-    {
-        "id": 1,
-        "titulo": "O Senhor dos Anéis",
-    },
-    {
-        "id": 2,
-        "titulo": "O Hobbit"
-    }
-]
-
-function buscaLivros(id){
-    return livros.findIndex(livro => {
-        return livro.id === Number(id);
-    })
-}
 
 app.get("/", (req, res) => {
     res.status(200).send("Olá Express");
 });
 
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros);
+app.get("/livros", async (req, res) => {
+    const listaLivros = await livro.find({});
+    res.status(200).json(listaLivros);
 });
 
 app.get("/livros/:id", (req, res) =>{
