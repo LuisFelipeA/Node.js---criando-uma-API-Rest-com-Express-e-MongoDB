@@ -13,5 +13,4 @@ routes.put("/livros/:id", LivroController.atualizarLivro);
 
 routes.delete("/livros/:id", LivroController.deletarLivro);
 
-
 export default routes;
