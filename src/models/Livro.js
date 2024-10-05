@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { autorSchema } from "./Autor.js";
+import { EditoraSchema } from "./Editora.js";
 
 const livroSchema = new mongoose.Schema({
     id: {type: mongoose.Schema.Types.ObjectId},
@@ -7,7 +8,8 @@ const livroSchema = new mongoose.Schema({
     editora: {type: String},
     preco: {type: Number},
     paginas: {type: Number},
-    autor: autorSchema
+    autor: autorSchema,
+    editora: EditoraSchema
 }, {versionKey: false});
 
 const livro = mongoose.model("livros", livroSchema);

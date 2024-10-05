@@ -1,5 +1,6 @@
 import livro from "../models/Livro.js";
 import {autor} from "../models/Autor.js";
+import { editora } from "../models/Editora.js";
 
 class LivroController {
     static async listarLivros (req, res) {
@@ -27,7 +28,8 @@ class LivroController {
         const novoLivro = req.body;
         try {
             const autorEncontrado = await autor.findById(novoLivro.autor);
-            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}};
+            const editoraEncontrada = await editora.findById(novoLivro.editora);
+            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}, editora: {...editoraEncontrada._doc}};
             const livroCriado = await livro.create(livroCompleto);
             res.status(201).json({message: "Livro Cadastrado", livro: livroCriado });
         }
@@ -40,7 +42,8 @@ class LivroController {
         const novoLivro = req.body;
         try {
             const autorEncontrado = await autor.findById(novoLivro.autor);
-            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}};
+            const editoraEncontrada = await editora.findById(novoLivro.editora);
+            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}, editora: {...editoraEncontrada._doc}};
             const id = req.params.id;
             await livro.findByIdAndUpdate(id, livroCompleto);
             res.status(200).json({message: "Livro Atualizado"});
