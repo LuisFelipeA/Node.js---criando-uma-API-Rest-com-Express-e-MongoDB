@@ -3,28 +3,33 @@ import {autor} from "../models/Autor.js";
 import { editora } from "../models/Editora.js";
 
 class LivroController {
-    static async listarLivros (req, res) {
+    static async listarLivros (req, res, next) {
         try{
             const listaLivros = await livro.find({});
             res.status(200).json(listaLivros);
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao listar`});
+            next(erro); // Envia o erro para app.js -> app.use((erro, req, res, next) ...
         }
     }
 
-    static async listarLivrosPorId (req, res) {
+    static async listarLivrosPorId (req, res, next) {
         try{
             const id = req.params.id;
             const livroEncontrado = await livro.findById(id);
-            res.status(200).json(livroEncontrado);
+            if (livroEncontrado !== null) {
+                res.status(200).json(livroEncontrado);
+            }
+            else {
+                res.status(404).json({message: "Livro não encontrado"})
+            }
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao listar por id`});
+            next(erro);
         }
     }
 
-    static async cadastrarLivro(req, res) {
+    static async cadastrarLivro(req, res, next) {
         const novoLivro = req.body;
         try {
             const autorEncontrado = await autor.findById(novoLivro.autor);
@@ -34,11 +39,11 @@ class LivroController {
             res.status(201).json({message: "Livro Cadastrado", livro: livroCriado });
         }
         catch(erro){
-            res.status(500).json({message: `${erro.message} - falha ao cadastrar`});
+            next(erro);
         }
     }
 
-    static async atualizarLivro (req, res) {
+    static async atualizarLivro (req, res, next) {
         const novoLivro = req.body;
         try {
             const autorEncontrado = await autor.findById(novoLivro.autor);
@@ -49,29 +54,29 @@ class LivroController {
             res.status(200).json({message: "Livro Atualizado"});
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao atualizar`});
+            next(erro);
         }
     }
 
-    static async deletarLivro (req, res) {
+    static async deletarLivro (req, res, next) {
         try{
             const id = req.params.id;
             await livro.findByIdAndDelete(id);
             res.status(200).json({message: "Livro Deletado"});
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao deletar`});
+            next(erro);
         }
     }    
 
-    static async listarLivrosPorEditora (req, res) {
+    static async listarLivrosPorEditora (req, res, next) {
         const editora = req.query.editora;
         try {
             const LivrosPorEditora =  await livro.find({editora: editora});
             res.status(200).json(LivrosPorEditora);
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao deletar`});
+            next(erro);
         }
     }
 

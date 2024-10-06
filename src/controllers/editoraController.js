@@ -1,57 +1,62 @@
 import { editora } from "../models/Editora.js";
 
 class EditoraController{
-    static async listarEditoras (req, res) {
+    static async listarEditoras (req, res, next) {
         try{
             const listaEditoras = await editora.find({});
             res.status(200).json(listaEditoras);
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao listar`});
+            next(erro); // Envia o erro para app.js -> app.use((erro, req, res, next) ...
         }
     }
 
-    static async listarEditoraPorId (req, res) {
+    static async listarEditoraPorId (req, res, next) {
         try{
             const id = req.params.id;
             const editoraEncontrada = await editora.findById(id);
-            res.status(200).json(editoraEncontrada);
+            if (editoraEncontrada !== null) {
+                res.status(200).json(editoraEncontrada);
+            }
+            else {
+                res.status(404).json({message: "Editora não encontrada"})
+            }
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao listar por id`});
+            next(erro);
         }
     }
 
-    static async cadastrarEditora(req, res) {
+    static async cadastrarEditora(req, res, next) {
         try {
             const novaEditora = await editora.create(req.body);
             res.status(201).json({message: "Editora Cadastrada", editora: novaEditora });
 
         }
         catch(erro){
-            res.status(500).json({message: `${erro.message} - falha ao cadastrar`});
+            next(erro);
         }
     }
 
-    static async atualizarEditora (req, res) {
+    static async atualizarEditora (req, res, next) {
         try{
             const id = req.params.id;
             await editora.findByIdAndUpdate(id, req.body);
             res.status(200).json({message: "Editora Atualizada"});
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao atualizar`});
+            next(erro);
         }
     }
 
-    static async deletarEditora (req, res) {
+    static async deletarEditora (req, res, next) {
         try{
             const id = req.params.id;
             await editora.findByIdAndDelete(id);
             res.status(200).json({message: "Editora Deletada"});
         }
         catch (erro) {
-            res.status(500).json({message: `${erro.message} - falha ao deletar`});
+            next(erro);
         }
     } 
 }
