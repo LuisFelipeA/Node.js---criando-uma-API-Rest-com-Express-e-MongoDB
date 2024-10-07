@@ -1,3 +1,4 @@
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 import { editora } from "../models/Editora.js";
 
 class EditoraController{
@@ -19,7 +20,7 @@ class EditoraController{
                 res.status(200).json(editoraEncontrada);
             }
             else {
-                res.status(404).json({message: "Editora não encontrada"})
+                next(new NaoEncontrado("Editora não encontrada"));
             }
         }
         catch (erro) {

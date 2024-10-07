@@ -1,3 +1,4 @@
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 import {autor} from "../models/Autor.js";
 
 class AutorController {
@@ -19,7 +20,7 @@ class AutorController {
                 res.status(200).json(autorEncontrado);
             }
             else {
-                res.status(404).json({message: "Autor não encontrado"})
+                next(new NaoEncontrado("Autor não encontrado"));
             }
         }
         catch (erro) {
