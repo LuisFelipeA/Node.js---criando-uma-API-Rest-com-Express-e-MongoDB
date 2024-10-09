@@ -71,9 +71,9 @@ class LivroController {
     }    
 
     static async listarLivrosPorFiltro (req, res, next) {
-        const {editora, titulo} = req.query;
+        const {editora, titulo, nomeAutor} = req.query;
         try {
-            const busca = {};
+            let busca = {};
             
             const regex = new RegExp(titulo, "i"); // Busca passando apenas uma parte do titulo
 
@@ -81,9 +81,24 @@ class LivroController {
 
             if (titulo) {busca.titulo = regex;}
 
-            // const LivrosResultados =  await livro.find({'editora.nome': editora, titulo: titulo});
-            const LivrosResultados =  await livro.find(busca);
-            res.status(200).json(LivrosResultados);
+            if (nomeAutor) {              
+                const autorEncontrado = await autor.findOne({nome: {$regex: nomeAutor, $options: "i"}});
+                
+                if (autorEncontrado !== null){
+                    busca['autor._id'] = autorEncontrado._id;
+                }
+                else {
+                    busca = null;
+                }
+            }
+
+            if (busca !== null){
+                const LivrosResultados =  await livro.find(busca);
+                res.status(200).json(LivrosResultados);
+            }
+            else{
+                res.status(200).send([]);
+            }
         }
         catch (erro) {
             next(erro);
