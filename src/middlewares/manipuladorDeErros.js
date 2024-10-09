@@ -6,6 +6,8 @@ import NaoEncontrado from "../erros/NaoEncontrado.js";
 
 function manipuladorDeErros (erro, req, res, next) {
     if (erro instanceof mongoose.Error.CastError) {
+        console.log(erro)
+
         new RequisicaoIncorreta().enviarResposta(res);
     }
     else if (erro instanceof mongoose.Error.ValidationError) {
