@@ -75,9 +75,11 @@ class LivroController {
         try {
             const busca = {};
             
-            if (editora) {busca['editora.nome'] = editora;}
-            
-            if (titulo) {busca.titulo = titulo;}
+            const regex = new RegExp(titulo, "i"); // Busca passando apenas uma parte do titulo
+
+            if (editora) {busca['editora.nome'] = {$regex: editora, $options: "i"}} // Busca passando apenas uma parte da editora (opcional) 
+
+            if (titulo) {busca.titulo = regex;}
 
             // const LivrosResultados =  await livro.find({'editora.nome': editora, titulo: titulo});
             const LivrosResultados =  await livro.find(busca);
